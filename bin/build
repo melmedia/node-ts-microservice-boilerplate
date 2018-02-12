@@ -1,0 +1,27 @@
+#!/bin/bash
+# run on node6 deploy node
+
+set -e
+
+lib_dir=node_modules/deployment
+
+scriptpath=$(dirname $0)
+cd $scriptpath/../
+
+echo "[deployment] Compile"
+yarn run compile
+
+echo "[deployment] Generating apidoc"
+yarn run apidoc
+
+project=$project \
+target_host=$target_host \
+port=$port \
+env=$env \
+lib_dir=$lib_dir \
+remote_user=gorod \
+packaging_release_number=$packaging_release_number \
+github_project_url=$github_project_url \
+git_branch=$git_branch \
+build_only=$build_only
+source $lib_dir/bin/build

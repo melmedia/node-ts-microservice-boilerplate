@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="replace-me" basedir=".">
+    <property name="packaging.project" value="replace-me"/>
+
+    <property name="params.env" value="dev"/>
+
+    <property name="project.node-modules.path" value="${basedir}/node_modules"/>
+
+    <property name="services.reference" value="../../../config/base/services.json"/>
+
+    <property name="replace-me.runtime-path" value="${basedir}/runtime"/>
+
+    <import file="${project.node-modules.path}/deployment/packaging.xml"/>
+
+
+    <!-- Deployment -->
+
+    <target name="packaging.shared-folders.create.logs" depends="packaging.main-app.create-shared-folders.logs"/>
+    <target name="packaging.shared-folders" depends="packaging.shared-folders.create, packaging.shared-folders.set-permissions"/>
+
+    <target name="replace-me.migrate">
+        <shellscript shell="bash" failonerror="true">
+            yarn run migrate
+        </shellscript>
+    </target>
+
+</project>

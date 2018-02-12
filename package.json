@@ -1,0 +1,50 @@
+{
+  "name": "node-backend-microservice-boilerplate",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "compile": "./node_modules/.bin/tsc",
+    "compile-dev": "./node_modules/.bin/tsc --watch",
+    "start": "bin/environment node dist/app.js",
+    "start-dev": "bin/environment node_modules/.bin/nodemon dist/app.js",
+    "typeorm-config": "bin/environment node dist/bin/db-config.js > ormconfig.json",
+    "migrate": "yarn run typeorm-config && ./node_modules/.bin/typeorm migrations:run",
+    "migrate-undo": "yarn run typeorm-config && ./node_modules/.bin/typeorm migrations:revert",
+    "generate-task-id": "node dist/modules/task/bin/generate-task-id.js",
+    "gulp": "./node_modules/.bin/gulp",
+    "apidoc": "yarn run gulp apidoc",
+    "lint": "./node_modules/.bin/tslint --project tsconfig.json"
+  },
+  "dependencies": {
+    "@c7s/config": "git+ssh://git@github.com/c7s/config.git#dev",
+    "@c7s/node-framework": "git+ssh://git@github.com/c7s/node-framework.git#dev",
+    "@c7s/rest-client": "git+ssh://git@github.com/c7s/rest-client.git#dev",
+    "axios": "0.17.1",
+    "class-transformer": "0.1.9",
+    "class-validator": "0.8.1",
+    "deployment": "git+ssh://git@github.com/c7s/deployment.git#dev",
+    "hard-rejection": "1.0.0",
+    "inversify": "4.10.0",
+    "lodash": "4.17.5",
+    "pg": "7.4.1",
+    "reflect-metadata": "0.1.12",
+    "routing-controllers": "0.7.6",
+    "source-map-support": "0.5.3",
+    "tsconfig-paths": "3.1.1",
+    "typeorm": "0.1.12",
+    "yargs": "11.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "4.11.1",
+    "@types/lodash": "4.14.102",
+    "@types/node": "8.0.46",
+    "@types/yargs": "10.0.1",
+    "gulp": "3.9.1",
+    "gulp-apidoc": "0.2.6",
+    "gulp-tslint": "8.1.2",
+    "nodemon": "1.14.12",
+    "tslint": "5.9.1",
+    "tslint-config-airbnb": "5.6.0",
+    "typescript": "2.7.1"
+  }
+}
