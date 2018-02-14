@@ -1,8 +1,9 @@
+#!/usr/bin/env node
+import '../bootstrap';
 import { argv } from 'yargs';
 import { Repository } from 'typeorm';
 import { di } from '@c7s/node-framework';
 import { Type } from '../Type';
-import '../bootstrap';
 import { Client, Status } from '../infrastructure/models/Client';
 import { app } from '../console';
 

@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Connection, getRepository, Repository } from 'typeorm';
 import { Container } from 'inversify';
 import { Logger } from 'log4js';
@@ -20,7 +21,7 @@ export class AppModule extends Module {
 
   public async initDiContainer(container: Container) {
     const configSource = new ConfigFileChain(
-      this.baseDirectory,
+      path.resolve(__dirname, '../config'),
       process.env.REPLACE_ME_ENV as string,
     );
     const configFactory = new ConfigFactory(configSource);
