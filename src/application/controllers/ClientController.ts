@@ -59,7 +59,7 @@ export class ClientController {
   @Post('/')
   @HttpCode(201)
   public async create(
-    @BodyParam('client', { required: true, validate: true }) clientForm: CreateClientForm,
+    @BodyParam('client', { required: true }) clientForm: CreateClientForm,
     @Res() response: Response,
   ) {
     let client = plainToClass(Client, clientForm);

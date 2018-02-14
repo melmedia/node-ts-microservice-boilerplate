@@ -1,5 +1,5 @@
 {
-  "name": "node-backend-microservice-boilerplate",
+  "name": "node-microservice-boilerplate",
   "version": "1.0.0",
   "license": "UNLICENSED",
   "scripts": {
@@ -10,16 +10,15 @@
     "typeorm-config": "bin/environment node dist/bin/db-config.js > ormconfig.json",
     "migrate": "yarn run typeorm-config && ./node_modules/.bin/typeorm migrations:run",
     "migrate-undo": "yarn run typeorm-config && ./node_modules/.bin/typeorm migrations:revert",
-    "generate-task-id": "node dist/modules/task/bin/generate-task-id.js",
     "gulp": "./node_modules/.bin/gulp",
     "apidoc": "yarn run gulp apidoc",
     "lint": "./node_modules/.bin/tslint --project tsconfig.json"
   },
   "dependencies": {
+    "@c7s/config": "git+ssh://git@github.com/c7s/config.git#dev",
     "@c7s/node-framework": "git+ssh://git@github.com/c7s/node-framework.git#dev",
     "@c7s/rest-client": "git+ssh://git@github.com/c7s/rest-client.git#dev",
     "axios": "0.17.1",
-    "@c7s/config": "git+ssh://git@github.com/c7s/config.git#dev",
     "class-transformer": "0.1.9",
     "class-validator": "0.8.1",
     "deployment": "git+ssh://git@github.com/c7s/deployment.git#dev",
