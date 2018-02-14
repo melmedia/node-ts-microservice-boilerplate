@@ -305,7 +305,7 @@ export class ClientController {
   @OnUndefined(204)
   public async updateCoach(
     @Param('id') id: number,
-    @BodyParam('coach', { required: true }) coachForm: SetCoachForm
+    @BodyParam('coach', { required: true }) coachForm: SetCoachForm,
   ) {
     const client = await this.clientDataRepository.findOneById(id);
     if (!client) {
@@ -340,7 +340,7 @@ export class ClientController {
   @OnUndefined(204)
   public async updateNutritionist(
     @Param('id') id: number,
-    @BodyParam('nutritionist', { required: true }) nutritionistForm: SetNutritionistForm
+    @BodyParam('nutritionist', { required: true }) nutritionistForm: SetNutritionistForm,
   ) {
     const client = await this.clientDataRepository.findOneById(id);
     if (!client) {

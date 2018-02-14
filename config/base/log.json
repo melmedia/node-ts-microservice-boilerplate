@@ -1,0 +1,12 @@
+{
+  "main": {
+    "type": "file",
+    "filename": "app.log",
+    "level": "debug"
+  },
+  "access": {
+    "type": "file",
+    "filename": "access.log",
+    "level": "debug"
+  }
+}

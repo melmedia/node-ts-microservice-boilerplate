@@ -8,9 +8,11 @@ const tsConfigPaths = require('tsconfig-paths');
 /* Path mapping init, must be before import app files */
 tsConfigPaths.register({
   baseUrl: __dirname,
-  paths: tsConfig.compilerOptions.paths
+  paths: tsConfig.compilerOptions.paths,
 });
 
-import './ioc/loader';
+hardRejection();
 
-hardRejection(/* TODO Loggers.Main.critical */);
+if (!process.env.REPLACE_ME_ENV) {
+  throw new Error('Environment variable REPLACE_ME_ENV is not set');
+}
