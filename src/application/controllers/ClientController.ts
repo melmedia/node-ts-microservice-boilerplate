@@ -41,16 +41,9 @@ export class ClientController {
    * @apiParam {Object} client
    * @apiParam {String} [client.firstName]
    * @apiParam {String} [client.lastName]
-   * @apiParam {String=f,m} [client.gender]
-   * @apiParam {String} [client.birthDate] Format is '2017-09-30'
    * @apiParam {String} [client.email]
-   * @apiParam {String} client.phone Must be unique for all clients
    * @apiParam {Number} [client.coachId]
    * @apiParam {Number} [client.nutritionistId]
-   * @apiParam {String=internal,external} client.source
-   * @apiParam {Object[]} [client.devices] Push messaging data
-   * @apiParam {String} [client.devices.token]
-   * @apiParam {String} [client.devices.platform]
    *
    * @apiSuccess (201) {String} Location HTTP header with url for created resource
    * @apiSuccess (201) {Object} client
@@ -59,18 +52,20 @@ export class ClientController {
    * @apiError (400) {String} code BadRequest
    *
    * @apiExample {curl} Example:
-   *   curl -v -X POST -H "Content-Type: application/json" --data-binary '{"client":{"phone":"+79991112233","source":"internal"}}' http://127.0.0.1:3003/client
+   *   curl -v -X POST -H "Content-Type: application/json" --data-binary '{"client":{"firstName":"Ivan","lastName":"Ivanov","email":"test@example.com"}}' http://127.0.0.1:3000/client
    */
 
   /* tslint:enable:max-line-length */
   @Post('/')
   @HttpCode(201)
   public async create(
-    @BodyParam('client', { required: true }) clientForm: CreateClientForm,
+    @BodyParam('client', { required: true, validate: true }) clientForm: CreateClientForm,
     @Res() response: Response,
   ) {
-    const client = plainToClass(Client, clientForm);
-    await this.clientDataRepository.save(client);
+    let client = plainToClass(Client, clientForm);
+    client.creationTime = client.updateTime = new Date;
+    client.status = Status.AutoCoaching;
+    client = await this.clientDataRepository.save(client);
 
     response.location(`/client/${client.id}`);
     return { client: (new ClientView).one(client) };
@@ -88,10 +83,7 @@ export class ClientController {
    * @apiParam {Object} client Can send only attributes you want to update
    * @apiParam {String} [client.firstName]
    * @apiParam {String} [client.lastName]
-   * @apiParam {String=f,m} [client.gender]
-   * @apiParam {String} [client.birthDate] Format is '2017-09-30'
    * @apiParam {String} [client.email]
-   * @apiParam {String} [client.phone]
    *
    * @apiSuccess (204) {String} HttpStatusCode
    *
@@ -99,7 +91,7 @@ export class ClientController {
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v -X PATCH -H "Content-Type: application/json" --data-binary '{"client":{"firstName":"Ivan","lastName":"Petrov","email":"test@example.com"}}' http://127.0.0.1:3003/client/1
+   *   curl -v -X PATCH -H "Content-Type: application/json" --data-binary '{"client":{"firstName":"Ivan","lastName":"Petrov","email":"test@example.com"}}' http://127.0.0.1:3000/client/1
    */
 
   /* tslint:enable:max-line-length */
@@ -109,15 +101,16 @@ export class ClientController {
     @Param('id') id: number,
     @BodyParam('client', { required: true }) clientForm: UpdateClientForm,
   ) {
-    let storedClient = await this.clientDataRepository.findOneById(id);
+    let client = await this.clientDataRepository.findOneById(id);
 
-    if (!storedClient) {
+    if (!client) {
       throw new NotFoundError('No such client');
     }
 
-    storedClient = plainToClassFromExist(storedClient, clientForm);
+    client = plainToClassFromExist(client, clientForm);
+    client.updateTime = new Date;
 
-    await this.clientDataRepository.save(storedClient);
+    await this.clientDataRepository.save(client);
   }
 
   /* tslint:disable:max-line-length */
@@ -140,28 +133,15 @@ export class ClientController {
    * @apiSuccess {Object[]} clients
    * @apiSuccess {String} [clients.firstName]
    * @apiSuccess {String} [clients.lastName]
-   * @apiSuccess {String=f,m} [clients.gender]
-   * @apiSuccess {String} clients.phone
    * @apiSuccess {String} [clients.email]
-   * @apiSuccess {String} [clients.birthDate]
-   * @apiSuccess {String} clients.creationTime
    * @apiSuccess {Number} [clients.coachId]
    * @apiSuccess {Number} [clients.nutritionistId]
-   * @apiSuccess {String=internal,external} clients.source
    * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} clients.status
-   * @apiSuccess {Object} clients.assessment
-   * @apiSuccess {Boolean} clients.assessment.isPaid
-   * @apiSuccess {String} [clients.assessment.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [clients.assessment.startDate] Format is "2016-01-30" (ISO-8601)
-   * @apiSuccess {Object} clients.coaching
-   * @apiSuccess {Boolean} clients.coaching.isPaid
-   * @apiSuccess {String} [clients.coaching.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [clients.coaching.startDate] Format is "2016-01-30" (ISO-8601)
    *
    * @apiError (400) {String} code BadRequest
    *
    * @apiExample {curl} Example:
-   *   curl -v http://127.0.0.1:3003/client
+   *   curl -v http://127.0.0.1:3000/client
    */
 
   /* tslint:enable:max-line-length */
@@ -246,37 +226,24 @@ export class ClientController {
    * @apiSuccess {Object} client
    * @apiSuccess {String} [client.firstName]
    * @apiSuccess {String} [client.lastName]
-   * @apiSuccess {String=f,m} [client.gender]
-   * @apiSuccess {String} client.phone
    * @apiSuccess {String} [client.email]
-   * @apiSuccess {String} [client.birthDate]
-   * @apiSuccess {String} client.creationTime
    * @apiSuccess {Number} [client.coachId]
    * @apiSuccess {Number} [client.nutritionistId]
-   * @apiSuccess {String=internal,external} client.source
    * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} client.status
-   * @apiSuccess {Object[]} [client.devices] Push messaging data
-   * @apiSuccess {String} [client.devices.token]
-   * @apiSuccess {String} [client.devices.platform]
-   * @apiSuccess {Object} client.assessment
-   * @apiSuccess {Boolean} client.assessment.isPaid
-   * @apiSuccess {String} [client.assessment.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [client.assessment.startDate] Format is "2016-01-30" (ISO-8601)
-   * @apiSuccess {Object} client.coaching
-   * @apiSuccess {Boolean} client.coaching.isPaid
-   * @apiSuccess {String} [client.coaching.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [client.coaching.startDate] Format is "2016-01-30" (ISO-8601)
    *
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v http://127.0.0.1:3003/client/1
+   *   curl -v http://127.0.0.1:3000/client/1
    */
 
   /* tslint:enable:max-line-length */
   @Get('/:id')
   public async get(@Param('id') id: number) {
     const client = await this.clientDataRepository.findOneById(id);
+    if (!client) {
+      throw new NotFoundError('No such client');
+    }
     return { client: (new ClientView).one(client as Client) };
   }
 
@@ -297,7 +264,7 @@ export class ClientController {
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"coach":{"id":1}}' http://127.0.0.1:3003/client/1/coach
+   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"coach":{"id":1}}' http://127.0.0.1:3000/client/1/coach
    */
 
   /* tslint:enable:max-line-length */
@@ -312,6 +279,7 @@ export class ClientController {
       throw new NotFoundError('No such client');
     }
     client.coachId = coachForm.id;
+    client.updateTime = new Date;
     await this.clientDataRepository.save(client);
   }
 
@@ -332,7 +300,7 @@ export class ClientController {
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"nutritionist":{"id":1}}' http://127.0.0.1:3003/client/1/nutritionist
+   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"nutritionist":{"id":1}}' http://127.0.0.1:3000/client/1/nutritionist
    */
 
   /* tslint:enable:max-line-length */
@@ -347,6 +315,7 @@ export class ClientController {
       throw new NotFoundError('No such client');
     }
     client.nutritionistId = nutritionistForm.id;
+    client.updateTime = new Date;
     await this.clientDataRepository.save(client);
   }
 

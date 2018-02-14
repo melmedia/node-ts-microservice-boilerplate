@@ -32,4 +32,10 @@ export class Client {
 
   @Column()
   public status!: Status;
+
+  @Column()
+  public creationTime!: Date;
+
+  @Column()
+  public updateTime!: Date;
 }
