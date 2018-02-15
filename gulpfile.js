@@ -8,11 +8,9 @@ gulp.task('apidoc', function () {
     gulpApidoc({
         config: path.join(__dirname, './'),
         src: [
-            path.join(__dirname, 'src/modules'),
-            path.join(__dirname, 'node_modules/auth-service/controllers'),
-            path.join(__dirname, 'node_modules/user-service/controllers'),
+            path.join(__dirname, 'src/application/controllers'),
         ],
-        dest: path.join(__dirname, 'static/apidoc')
+        dest: path.join(__dirname, 'apidoc')
     }, function(error) {
         if (error) {
             console.log(error);

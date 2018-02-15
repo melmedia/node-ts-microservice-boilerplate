@@ -39,11 +39,11 @@ export class ClientController {
    * @apiVersion 1.0.0
    *
    * @apiParam {Object} client
-   * @apiParam {String} [client.firstName]
-   * @apiParam {String} [client.lastName]
-   * @apiParam {String} [client.email]
-   * @apiParam {Number} [client.coachId]
-   * @apiParam {Number} [client.nutritionistId]
+   * @apiParam {String} .firstName
+   * @apiParam {String} .lastName
+   * @apiParam {String} .email
+   * @apiParam {Number} [.coachId]
+   * @apiParam {Number} [.nutritionistId]
    *
    * @apiSuccess (201) {String} Location HTTP header with url for created resource
    * @apiSuccess (201) {Object} client
@@ -81,9 +81,9 @@ export class ClientController {
    * @apiParam {Number} id
    *
    * @apiParam {Object} client Can send only attributes you want to update
-   * @apiParam {String} [client.firstName]
-   * @apiParam {String} [client.lastName]
-   * @apiParam {String} [client.email]
+   * @apiParam {String} .firstName
+   * @apiParam {String} .lastName
+   * @apiParam {String} .email
    *
    * @apiSuccess (204) {String} HttpStatusCode
    *
@@ -131,11 +131,11 @@ export class ClientController {
    * @apiParam {String} [id] filter list by IDs (comma-separated: 1,2,3)
    *
    * @apiSuccess {Object[]} clients
-   * @apiSuccess {String} [clients.firstName]
-   * @apiSuccess {String} [clients.lastName]
-   * @apiSuccess {String} [clients.email]
-   * @apiSuccess {Number} [clients.coachId]
-   * @apiSuccess {Number} [clients.nutritionistId]
+   * @apiSuccess {String} .firstName
+   * @apiSuccess {String} .lastName
+   * @apiSuccess {String} .email
+   * @apiSuccess {Number} [.coachId]
+   * @apiSuccess {Number} [.nutritionistId]
    * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} clients.status
    *
    * @apiError (400) {String} code BadRequest
@@ -224,12 +224,12 @@ export class ClientController {
    * @apiParam {Number} id
    *
    * @apiSuccess {Object} client
-   * @apiSuccess {String} [client.firstName]
-   * @apiSuccess {String} [client.lastName]
-   * @apiSuccess {String} [client.email]
-   * @apiSuccess {Number} [client.coachId]
-   * @apiSuccess {Number} [client.nutritionistId]
-   * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} client.status
+   * @apiSuccess {String} .firstName
+   * @apiSuccess {String} .lastName
+   * @apiSuccess {String} .email
+   * @apiSuccess {Number} [.coachId]
+   * @apiSuccess {Number} [.nutritionistId]
+   * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} .status
    *
    * @apiError (404) {String} code NotFound
    *
