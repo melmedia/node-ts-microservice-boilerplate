@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@c7s/config": "git+ssh://git@github.com/c7s/config.git#dev",
-    "@c7s/node-framework": "git+ssh://git@github.com/c7s/node-framework.git#dev",
+    "@c7s/node-ts-framework": "git+ssh://git@github.com/c7s/node-framework.git#dev",
     "@c7s/rest-client": "git+ssh://git@github.com/c7s/rest-client.git#dev",
     "axios": "0.17.1",
     "class-transformer": "0.1.9",

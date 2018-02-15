@@ -16,7 +16,7 @@ import {
 import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
-import { di } from '@c7s/node-framework';
+import { di } from '@c7s/node-ts-framework';
 import { queryIdArray } from '@c7s/rest-client';
 import { CreateClientForm } from '../forms/CreateClientForm';
 import { Client, Status } from '../../infrastructure/models/Client';

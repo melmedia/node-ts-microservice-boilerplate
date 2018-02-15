@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import '../bootstrap';
 import { Connection } from 'typeorm';
-import { di, components } from '@c7s/node-framework';
+import { di, components } from '@c7s/node-ts-framework';
 import { app, modules } from '../console';
 import { Type } from '../Type';
 

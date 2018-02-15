@@ -4,7 +4,7 @@ import {
   ClusteredWebApplication,
   Environment,
   middlewares,
-} from '@c7s/node-framework';
+} from '@c7s/node-ts-framework';
 import { AppModule } from './AppModule';
 
 const modules = [new AppModule];

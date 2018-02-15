@@ -2,7 +2,7 @@ import * as path from 'path';
 import { Connection, getRepository, Repository } from 'typeorm';
 import { Container } from 'inversify';
 import { Logger } from 'log4js';
-import { Module, components } from '@c7s/node-framework';
+import { Module, components } from '@c7s/node-ts-framework';
 import {
   ServerConfig,
   ConfigFactory,

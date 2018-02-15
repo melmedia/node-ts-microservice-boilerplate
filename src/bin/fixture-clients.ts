@@ -2,7 +2,7 @@
 import '../bootstrap';
 import { argv } from 'yargs';
 import { Repository } from 'typeorm';
-import { di } from '@c7s/node-framework';
+import { di } from '@c7s/node-ts-framework';
 import { Type } from '../Type';
 import { Client, Status } from '../infrastructure/models/Client';
 import { app } from '../console';
