@@ -1,12 +1,12 @@
 {
   "main": {
     "type": "file",
-    "filename": "app.log",
+    "filename": "runtime/replace_me-app.log",
     "level": "debug"
   },
   "access": {
     "type": "file",
-    "filename": "access.log",
+    "filename": "runtime/replace_me-access.log",
     "level": "debug"
   }
 }
