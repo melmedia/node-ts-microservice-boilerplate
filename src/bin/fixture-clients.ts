@@ -22,7 +22,7 @@ class FixtureClients {
 
 }
 
-app.init().then(() => {
+app.run(async () => {
   const clientId: string | undefined = argv.clientId;
-  (new FixtureClients).createClient(Number(clientId));
+  await (new FixtureClients).createClient(Number(clientId));
 });

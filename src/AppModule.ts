@@ -46,6 +46,10 @@ export class AppModule extends Module {
       .toConstantValue(getRepository(Client));
   }
 
+  public async end(container: Container) {
+    await container.get<Connection>(Type.DbConnection).close();
+  }
+
   protected get baseDirectory() {
     return __dirname;
   }
