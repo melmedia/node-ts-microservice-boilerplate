@@ -21,6 +21,7 @@
     "class-transformer": "0.1.9",
     "class-validator": "0.8.1",
     "deployment": "git+ssh://git@github.com/c7s/deployment.git#dev",
+    "express": "4.16.2",
     "hard-rejection": "1.0.0",
     "inversify": "4.10.0",
     "lodash": "4.17.5",
