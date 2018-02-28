@@ -19,7 +19,7 @@
     "@c7s/rest-client": "git+ssh://git@github.com/c7s/rest-client.git#dev",
     "axios": "0.17.1",
     "class-transformer": "0.1.9",
-    "class-validator": "0.8.1",
+    "class-validator": "0.7.3",
     "deployment": "git+ssh://git@github.com/c7s/deployment.git#dev",
     "express": "4.16.2",
     "inversify": "4.10.0",
