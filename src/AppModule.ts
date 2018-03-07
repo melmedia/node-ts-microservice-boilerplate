@@ -36,6 +36,8 @@ export class AppModule extends Module {
     const loggerFactory = new components.LoggerFactory;
     container.bind<Logger>(Type.AppLogger)
       .toConstantValue(loggerFactory.create('app'));
+    container.bind<Logger>(Type.DbLogger)
+      .toConstantValue(loggerFactory.create('db'));
     container.bind<Logger>(Type.AccessLogger)
       .toConstantValue(loggerFactory.create('access'));
 
