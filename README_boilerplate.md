@@ -35,19 +35,19 @@ yarn install
 
 Build application:
 ```sh
-yarn run compile
+yarn build
 ```
 
 Run migrations:
 ```sh
 chmod +x bin/environment
-yarn run migrate
+yarn migrate
 mkdir runtime/
 ```
 
 Generate documentation:
 ```sh
-yarn run apidoc
+yarn apidoc
 ```
 
 
@@ -55,14 +55,14 @@ yarn run apidoc
 
 In one console run typescript compiler in watch mode:
 ```sh
-yarn run compile-dev
+yarn build-dev
 ```
 
 In another console run nodemon watching compiled files changes:
 ```sh
-yarn run start-dev
+yarn start-dev
 ```
-or `yarn run start` without watch.
+or `yarn start` without watch.
 
 See logs in `runtime` folder.
 

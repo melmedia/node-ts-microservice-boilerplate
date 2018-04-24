@@ -101,7 +101,7 @@ export class ClientController {
     @Param('id') id: number,
     @BodyParam('client', { required: true }) clientForm: UpdateClientForm,
   ) {
-    let client = await this.clientDataRepository.findOneById(id);
+    let client = await this.clientDataRepository.findOne(id);
 
     if (!client) {
       throw new NotFoundError('No such client');
@@ -240,7 +240,7 @@ export class ClientController {
   /* tslint:enable:max-line-length */
   @Get('/:id')
   public async get(@Param('id') id: number) {
-    const client = await this.clientDataRepository.findOneById(id);
+    const client = await this.clientDataRepository.findOne(id);
     if (!client) {
       throw new NotFoundError('No such client');
     }
@@ -274,7 +274,7 @@ export class ClientController {
     @Param('id') id: number,
     @BodyParam('coach', { required: true }) coachForm: SetCoachForm,
   ) {
-    const client = await this.clientDataRepository.findOneById(id);
+    const client = await this.clientDataRepository.findOne(id);
     if (!client) {
       throw new NotFoundError('No such client');
     }
@@ -310,7 +310,7 @@ export class ClientController {
     @Param('id') id: number,
     @BodyParam('nutritionist', { required: true }) nutritionistForm: SetNutritionistForm,
   ) {
-    const client = await this.clientDataRepository.findOneById(id);
+    const client = await this.clientDataRepository.findOne(id);
     if (!client) {
       throw new NotFoundError('No such client');
     }
