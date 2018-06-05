@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { Connection, getRepository, Repository } from 'typeorm';
 import { Container } from 'inversify';
+import { buildProviderModule } from 'inversify-binding-decorators';
 import { Logger } from 'log4js';
 import { Module, components } from '@c7s/node-ts-framework';
 import {
@@ -20,6 +21,8 @@ import { Type } from './Type';
 export class AppModule extends Module {
 
   public async initDiContainer(container: Container) {
+    container.load(buildProviderModule());
+
     const configSource = new ConfigFileChain(
       path.resolve(__dirname, '../config'),
       process.env.REPLACE_ME_ENV as string,
