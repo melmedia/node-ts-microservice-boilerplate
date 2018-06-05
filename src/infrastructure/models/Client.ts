@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 
-export enum Status {
+export enum ClientStatus {
   AutoCoaching = 'autoCoaching',
   Survey = 'survey',
   PreEating = 'preEating',
@@ -8,7 +8,6 @@ export enum Status {
   PreCoaching = 'preCoaching',
   Coaching = 'coaching',
 }
-
 
 @Entity()
 export class Client {
@@ -31,7 +30,7 @@ export class Client {
   public nutritionistId?: number;
 
   @Column()
-  public status!: Status;
+  public status!: ClientStatus;
 
   @Column()
   public creationTime!: Date;

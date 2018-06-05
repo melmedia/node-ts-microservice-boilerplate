@@ -1,9 +1,9 @@
 import lodashPick = require('lodash.pick');
-import { Client } from '../../infrastructure/models/Client';
+import * as models from '../../infrastructure/models';
 
 export class ClientView {
 
-  public index(clients: Client[]) {
+  public index(clients: models.Client[]) {
     return clients.map((client) => {
       return lodashPick(
         client,
@@ -18,7 +18,7 @@ export class ClientView {
     });
   }
 
-  public one(client: Client) {
+  public one(client: models.Client) {
     return lodashPick(
       client,
       [

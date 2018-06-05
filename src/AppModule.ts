@@ -11,7 +11,7 @@ import {
   DbConfig,
   ConfigFileChain,
 } from '@c7s/config';
-import { Client } from './infrastructure/models/Client';
+import * as models from './infrastructure/models';
 import { Type } from './Type';
 
 /**
@@ -47,8 +47,8 @@ export class AppModule extends Module {
     container.bind<Connection>(Type.DbConnection)
       .toConstantValue(await (new components.DbConnectionFactory).create([this]));
 
-    container.bind<Repository<Client>>(Type.ClientDataRepository)
-      .toConstantValue(getRepository(Client));
+    container.bind<Repository<models.Client>>(Type.ClientDataRepository)
+      .toConstantValue(getRepository(models.Client));
   }
 
   public async end(container: Container) {

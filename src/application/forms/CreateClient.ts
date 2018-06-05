@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 
 @Exclude()
-export class CreateClientForm {
+export class CreateClient {
   @Expose()
   @IsNotEmpty()
   public firstName!: string;

@@ -18,18 +18,15 @@ import { Response } from 'express';
 import { Repository } from 'typeorm';
 import { di } from '@c7s/node-ts-framework';
 import { queryIdArray } from '@c7s/rest-client';
-import { CreateClientForm } from '../forms/CreateClientForm';
-import { Client, Status } from '../../infrastructure/models/Client';
+import * as forms from '../forms';
+import * as models from '../../infrastructure/models';
 import { ClientView } from '../views/ClientView';
-import { UpdateClientForm } from '../forms/UpdateClientForm';
-import { SetCoachForm } from '../forms/SetCoachForm';
-import { SetNutritionistForm } from '../forms/SetNutritionistForm';
 import { Type } from '../../Type';
 
 @JsonController('/client')
 export class ClientController {
   @di.inject(Type.ClientDataRepository)
-  protected clientDataRepository!: Repository<Client>;
+  protected clientDataRepository!: Repository<models.Client>;
 
   /* tslint:disable:max-line-length */
   /**
@@ -59,12 +56,12 @@ export class ClientController {
   @Post('/')
   @HttpCode(201)
   public async create(
-    @BodyParam('client', { required: true }) clientForm: CreateClientForm,
+    @BodyParam('client', { required: true }) clientForm: forms.CreateClient,
     @Res() response: Response,
   ) {
-    let client = plainToClass(Client, clientForm);
+    let client = plainToClass(models.Client, clientForm);
     client.creationTime = client.updateTime = new Date;
-    client.status = Status.AutoCoaching;
+    client.status = models.ClientStatus.AutoCoaching;
     client = await this.clientDataRepository.save(client);
 
     response.location(`/client/${client.id}`);
@@ -99,7 +96,7 @@ export class ClientController {
   @OnUndefined(204)
   public async update(
     @Param('id') id: number,
-    @BodyParam('client', { required: true }) clientForm: UpdateClientForm,
+    @BodyParam('client', { required: true }) clientForm: forms.UpdateClient,
   ) {
     let client = await this.clientDataRepository.findOne(id);
 
@@ -159,16 +156,16 @@ export class ClientController {
     if (statusPreset) {
       const statusFilterMap = {
         assessment: [
-          Status.Survey,
-          Status.PreEating,
-          Status.Eating,
-          Status.PreCoaching,
+          models.ClientStatus.Survey,
+          models.ClientStatus.PreEating,
+          models.ClientStatus.Eating,
+          models.ClientStatus.PreCoaching,
         ],
         coaching: [
-          Status.Coaching,
+          models.ClientStatus.Coaching,
         ],
         autoCoaching: [
-          Status.AutoCoaching,
+          models.ClientStatus.AutoCoaching,
         ],
       };
 
@@ -244,7 +241,7 @@ export class ClientController {
     if (!client) {
       throw new NotFoundError('No such client');
     }
-    return { client: (new ClientView).one(client as Client) };
+    return { client: (new ClientView).one(client as models.Client) };
   }
 
   /* tslint:disable:max-line-length */
@@ -272,7 +269,7 @@ export class ClientController {
   @OnUndefined(204)
   public async updateCoach(
     @Param('id') id: number,
-    @BodyParam('coach', { required: true }) coachForm: SetCoachForm,
+    @BodyParam('coach', { required: true }) coachForm: forms.SetCoach,
   ) {
     const client = await this.clientDataRepository.findOne(id);
     if (!client) {
@@ -308,7 +305,7 @@ export class ClientController {
   @OnUndefined(204)
   public async updateNutritionist(
     @Param('id') id: number,
-    @BodyParam('nutritionist', { required: true }) nutritionistForm: SetNutritionistForm,
+    @BodyParam('nutritionist', { required: true }) nutritionistForm: forms.SetNutritionist,
   ) {
     const client = await this.clientDataRepository.findOne(id);
     if (!client) {
