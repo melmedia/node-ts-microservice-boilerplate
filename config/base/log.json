@@ -1,0 +1,12 @@
+{
+  "main": {
+    "type": "file",
+    "filename": "runtime/replace_me-app.log",
+    "level": "debug"
+  },
+  "access": {
+    "type": "file",
+    "filename": "runtime/replace_me-access.log",
+    "level": "debug"
+  }
+}

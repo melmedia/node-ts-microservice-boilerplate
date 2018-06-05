@@ -16,20 +16,17 @@ import {
 import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
-import { di } from '@c7s/node-framework';
+import { di } from '@c7s/node-ts-framework';
 import { queryIdArray } from '@c7s/rest-client';
-import { CreateClientForm } from '../forms/CreateClientForm';
-import { Client, Status } from '../../infrastructure/models/Client';
+import * as forms from '../forms';
+import * as models from '../../infrastructure/models';
 import { ClientView } from '../views/ClientView';
-import { UpdateClientForm } from '../forms/UpdateClientForm';
-import { SetCoachForm } from '../forms/SetCoachForm';
-import { SetNutritionistForm } from '../forms/SetNutritionistForm';
 import { Type } from '../../Type';
 
 @JsonController('/client')
 export class ClientController {
   @di.inject(Type.ClientDataRepository)
-  protected clientDataRepository!: Repository<Client>;
+  protected clientDataRepository!: Repository<models.Client>;
 
   /* tslint:disable:max-line-length */
   /**
@@ -39,18 +36,11 @@ export class ClientController {
    * @apiVersion 1.0.0
    *
    * @apiParam {Object} client
-   * @apiParam {String} [client.firstName]
-   * @apiParam {String} [client.lastName]
-   * @apiParam {String=f,m} [client.gender]
-   * @apiParam {String} [client.birthDate] Format is '2017-09-30'
-   * @apiParam {String} [client.email]
-   * @apiParam {String} client.phone Must be unique for all clients
-   * @apiParam {Number} [client.coachId]
-   * @apiParam {Number} [client.nutritionistId]
-   * @apiParam {String=internal,external} client.source
-   * @apiParam {Object[]} [client.devices] Push messaging data
-   * @apiParam {String} [client.devices.token]
-   * @apiParam {String} [client.devices.platform]
+   * @apiParam {String} .firstName
+   * @apiParam {String} .lastName
+   * @apiParam {String} .email
+   * @apiParam {Number} [.coachId]
+   * @apiParam {Number} [.nutritionistId]
    *
    * @apiSuccess (201) {String} Location HTTP header with url for created resource
    * @apiSuccess (201) {Object} client
@@ -59,18 +49,20 @@ export class ClientController {
    * @apiError (400) {String} code BadRequest
    *
    * @apiExample {curl} Example:
-   *   curl -v -X POST -H "Content-Type: application/json" --data-binary '{"client":{"phone":"+79991112233","source":"internal"}}' http://127.0.0.1:3003/client
+   *   curl -v -X POST -H "Content-Type: application/json" --data-binary '{"client":{"firstName":"Ivan","lastName":"Ivanov","email":"test@example.com"}}' http://127.0.0.1:3000/client
    */
 
   /* tslint:enable:max-line-length */
   @Post('/')
   @HttpCode(201)
   public async create(
-    @BodyParam('client', { required: true }) clientForm: CreateClientForm,
+    @BodyParam('client', { required: true }) clientForm: forms.CreateClient,
     @Res() response: Response,
   ) {
-    const client = plainToClass(Client, clientForm);
-    await this.clientDataRepository.save(client);
+    let client = plainToClass(models.Client, clientForm);
+    client.creationTime = client.updateTime = new Date;
+    client.status = models.ClientStatus.AutoCoaching;
+    client = await this.clientDataRepository.save(client);
 
     response.location(`/client/${client.id}`);
     return { client: (new ClientView).one(client) };
@@ -86,12 +78,9 @@ export class ClientController {
    * @apiParam {Number} id
    *
    * @apiParam {Object} client Can send only attributes you want to update
-   * @apiParam {String} [client.firstName]
-   * @apiParam {String} [client.lastName]
-   * @apiParam {String=f,m} [client.gender]
-   * @apiParam {String} [client.birthDate] Format is '2017-09-30'
-   * @apiParam {String} [client.email]
-   * @apiParam {String} [client.phone]
+   * @apiParam {String} .firstName
+   * @apiParam {String} .lastName
+   * @apiParam {String} .email
    *
    * @apiSuccess (204) {String} HttpStatusCode
    *
@@ -99,7 +88,7 @@ export class ClientController {
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v -X PATCH -H "Content-Type: application/json" --data-binary '{"client":{"firstName":"Ivan","lastName":"Petrov","email":"test@example.com"}}' http://127.0.0.1:3003/client/1
+   *   curl -v -X PATCH -H "Content-Type: application/json" --data-binary '{"client":{"firstName":"Ivan","lastName":"Petrov","email":"test@example.com"}}' http://127.0.0.1:3000/client/1
    */
 
   /* tslint:enable:max-line-length */
@@ -107,17 +96,18 @@ export class ClientController {
   @OnUndefined(204)
   public async update(
     @Param('id') id: number,
-    @BodyParam('client', { required: true }) clientForm: UpdateClientForm,
+    @BodyParam('client', { required: true }) clientForm: forms.UpdateClient,
   ) {
-    let storedClient = await this.clientDataRepository.findOneById(id);
+    let client = await this.clientDataRepository.findOne(id);
 
-    if (!storedClient) {
+    if (!client) {
       throw new NotFoundError('No such client');
     }
 
-    storedClient = plainToClassFromExist(storedClient, clientForm);
+    client = plainToClassFromExist(client, clientForm);
+    client.updateTime = new Date;
 
-    await this.clientDataRepository.save(storedClient);
+    await this.clientDataRepository.save(client);
   }
 
   /* tslint:disable:max-line-length */
@@ -138,30 +128,17 @@ export class ClientController {
    * @apiParam {String} [id] filter list by IDs (comma-separated: 1,2,3)
    *
    * @apiSuccess {Object[]} clients
-   * @apiSuccess {String} [clients.firstName]
-   * @apiSuccess {String} [clients.lastName]
-   * @apiSuccess {String=f,m} [clients.gender]
-   * @apiSuccess {String} clients.phone
-   * @apiSuccess {String} [clients.email]
-   * @apiSuccess {String} [clients.birthDate]
-   * @apiSuccess {String} clients.creationTime
-   * @apiSuccess {Number} [clients.coachId]
-   * @apiSuccess {Number} [clients.nutritionistId]
-   * @apiSuccess {String=internal,external} clients.source
+   * @apiSuccess {String} .firstName
+   * @apiSuccess {String} .lastName
+   * @apiSuccess {String} .email
+   * @apiSuccess {Number} [.coachId]
+   * @apiSuccess {Number} [.nutritionistId]
    * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} clients.status
-   * @apiSuccess {Object} clients.assessment
-   * @apiSuccess {Boolean} clients.assessment.isPaid
-   * @apiSuccess {String} [clients.assessment.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [clients.assessment.startDate] Format is "2016-01-30" (ISO-8601)
-   * @apiSuccess {Object} clients.coaching
-   * @apiSuccess {Boolean} clients.coaching.isPaid
-   * @apiSuccess {String} [clients.coaching.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [clients.coaching.startDate] Format is "2016-01-30" (ISO-8601)
    *
    * @apiError (400) {String} code BadRequest
    *
    * @apiExample {curl} Example:
-   *   curl -v http://127.0.0.1:3003/client
+   *   curl -v http://127.0.0.1:3000/client
    */
 
   /* tslint:enable:max-line-length */
@@ -179,16 +156,16 @@ export class ClientController {
     if (statusPreset) {
       const statusFilterMap = {
         assessment: [
-          Status.Survey,
-          Status.PreEating,
-          Status.Eating,
-          Status.PreCoaching,
+          models.ClientStatus.Survey,
+          models.ClientStatus.PreEating,
+          models.ClientStatus.Eating,
+          models.ClientStatus.PreCoaching,
         ],
         coaching: [
-          Status.Coaching,
+          models.ClientStatus.Coaching,
         ],
         autoCoaching: [
-          Status.AutoCoaching,
+          models.ClientStatus.AutoCoaching,
         ],
       };
 
@@ -244,40 +221,27 @@ export class ClientController {
    * @apiParam {Number} id
    *
    * @apiSuccess {Object} client
-   * @apiSuccess {String} [client.firstName]
-   * @apiSuccess {String} [client.lastName]
-   * @apiSuccess {String=f,m} [client.gender]
-   * @apiSuccess {String} client.phone
-   * @apiSuccess {String} [client.email]
-   * @apiSuccess {String} [client.birthDate]
-   * @apiSuccess {String} client.creationTime
-   * @apiSuccess {Number} [client.coachId]
-   * @apiSuccess {Number} [client.nutritionistId]
-   * @apiSuccess {String=internal,external} client.source
-   * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} client.status
-   * @apiSuccess {Object[]} [client.devices] Push messaging data
-   * @apiSuccess {String} [client.devices.token]
-   * @apiSuccess {String} [client.devices.platform]
-   * @apiSuccess {Object} client.assessment
-   * @apiSuccess {Boolean} client.assessment.isPaid
-   * @apiSuccess {String} [client.assessment.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [client.assessment.startDate] Format is "2016-01-30" (ISO-8601)
-   * @apiSuccess {Object} client.coaching
-   * @apiSuccess {Boolean} client.coaching.isPaid
-   * @apiSuccess {String} [client.coaching.paymentTime] Format is "2016-01-30T14:55:01+03:00" (ISO-8601)
-   * @apiSuccess {String} [client.coaching.startDate] Format is "2016-01-30" (ISO-8601)
+   * @apiSuccess {String} .firstName
+   * @apiSuccess {String} .lastName
+   * @apiSuccess {String} .email
+   * @apiSuccess {Number} [.coachId]
+   * @apiSuccess {Number} [.nutritionistId]
+   * @apiSuccess {String=autoCoaching,survey,preEating,eating,preCoaching,coaching} .status
    *
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v http://127.0.0.1:3003/client/1
+   *   curl -v http://127.0.0.1:3000/client/1
    */
 
   /* tslint:enable:max-line-length */
   @Get('/:id')
   public async get(@Param('id') id: number) {
-    const client = await this.clientDataRepository.findOneById(id);
-    return { client: (new ClientView).one(client as Client) };
+    const client = await this.clientDataRepository.findOne(id);
+    if (!client) {
+      throw new NotFoundError('No such client');
+    }
+    return { client: (new ClientView).one(client as models.Client) };
   }
 
   /* tslint:disable:max-line-length */
@@ -297,7 +261,7 @@ export class ClientController {
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"coach":{"id":1}}' http://127.0.0.1:3003/client/1/coach
+   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"coach":{"id":1}}' http://127.0.0.1:3000/client/1/coach
    */
 
   /* tslint:enable:max-line-length */
@@ -305,13 +269,14 @@ export class ClientController {
   @OnUndefined(204)
   public async updateCoach(
     @Param('id') id: number,
-    @BodyParam('coach', { required: true }) coachForm: SetCoachForm
+    @BodyParam('coach', { required: true }) coachForm: forms.SetCoach,
   ) {
-    const client = await this.clientDataRepository.findOneById(id);
+    const client = await this.clientDataRepository.findOne(id);
     if (!client) {
       throw new NotFoundError('No such client');
     }
     client.coachId = coachForm.id;
+    client.updateTime = new Date;
     await this.clientDataRepository.save(client);
   }
 
@@ -332,7 +297,7 @@ export class ClientController {
    * @apiError (404) {String} code NotFound
    *
    * @apiExample {curl} Example:
-   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"nutritionist":{"id":1}}' http://127.0.0.1:3003/client/1/nutritionist
+   *   curl -v -X PUT -H "Content-Type: application/json" --data-binary '{"nutritionist":{"id":1}}' http://127.0.0.1:3000/client/1/nutritionist
    */
 
   /* tslint:enable:max-line-length */
@@ -340,13 +305,14 @@ export class ClientController {
   @OnUndefined(204)
   public async updateNutritionist(
     @Param('id') id: number,
-    @BodyParam('nutritionist', { required: true }) nutritionistForm: SetNutritionistForm
+    @BodyParam('nutritionist', { required: true }) nutritionistForm: forms.SetNutritionist,
   ) {
-    const client = await this.clientDataRepository.findOneById(id);
+    const client = await this.clientDataRepository.findOne(id);
     if (!client) {
       throw new NotFoundError('No such client');
     }
     client.nutritionistId = nutritionistForm.id;
+    client.updateTime = new Date;
     await this.clientDataRepository.save(client);
   }
 

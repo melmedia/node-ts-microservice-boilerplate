@@ -8,19 +8,19 @@ import {
 } from 'class-validator';
 
 @Exclude()
-export class CreateClientForm {
+export class CreateClient {
   @Expose()
   @IsNotEmpty()
-  public firstName?: string;
+  public firstName!: string;
 
   @Expose()
   @IsNotEmpty()
-  public lastName?: string;
+  public lastName!: string;
 
   @Expose()
   @IsEmail()
-  @IsOptional()
-  public email?: string;
+  @IsNotEmpty()
+  public email!: string;
 
   @Expose()
   @IsInt()

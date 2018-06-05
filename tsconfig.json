@@ -9,8 +9,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
-    "sourceMap": true,
-    "baseUrl": "./src"
+    "sourceMap": true
   },
   "include": [
     "src/**/*.ts"

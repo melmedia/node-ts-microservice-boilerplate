@@ -1,0 +1,8 @@
+{
+  "main": {
+    "level": "info"
+  },
+  "access": {
+    "level": "info"
+  }
+}

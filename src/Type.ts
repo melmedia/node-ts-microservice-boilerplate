@@ -1,4 +1,6 @@
+import { di } from '@c7s/node-ts-framework';
+
 export const Type = {
-  ClientService: Symbol('ClientService'),
+  ... di.Type,
   ClientDataRepository: Symbol('ClientDataRepository'),
 };

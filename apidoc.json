@@ -1,6 +1,6 @@
 {
-  "name": "balance-me-light-backend",
-  "title": "Balance Me Light Backend",
-  "description": "Authentication, user services documentation is for expertAuth, expertUser services. clientUser is used internally by client service and must not be used directly",
+  "name": "replace-me",
+  "title": "Replace Me",
+  "description": "",
   "template": {"forceLanguage": "en"}
 }
